@@ -45,4 +45,3 @@ export default function Home(){
     {list.length===0 && <p className="text-zinc-500 mt-8">Tidak ada model cocok. Coba kata kunci lain.</p>}
   </div>;
 }
-
