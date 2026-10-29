@@ -1,4 +1,4 @@
-import { findModel, MODELS_2027 } from "./models";
+import { findModel } from "./models";
 import { callProvider, ChatResult } from "./providers";
 
 // Circuit breaker sederhana (in-memory per instance)
@@ -16,9 +16,8 @@ export function markRateLimited(id:string){ cooldown.set(id, Date.now()+COOLDOWN
  * - Setiap kegagalan dicatat di header X-Lytoos-Fallback-Chain
  */
 export async function chatWithFallback(requestedId: string, body:any, userKeys?:Record<string,string>) {
-  const primary = requestedId==="lytoos/auto-free" || requestedId==="auto"
-    ? MODELS_2027.filter(m=>["lytoos/gemini-3-flash-free","lytoos/muse-spark-1.2-free","lytoos/deepseek-v4-free","lytoos/kimi-k2.6-free","lytoos/agnes-2.0-flash-free"].includes(m.id))
-    : [findModel(requestedId), ...findModel(requestedId).fallback.map(findModel)];
+  const req = findModel(requestedId);
+  const primary = [req, ...req.fallback.map(findModel)].filter(m=>m.status!=="dead");
 
   const chain: string[] = [];
   const tried = new Set<string>();

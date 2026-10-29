@@ -8,7 +8,9 @@ export function getProviderKey(model: LytoosModel, userKeys?: Record<string,stri
 }
 export function getBaseUrl(model: LytoosModel) {
   const p = PROVIDERS[model.provider];
-  return process.env[p.baseUrlEnv] || p.defaultBase;
+  const base = process.env[p.baseUrlEnv] || p.defaultBase;
+  // Cloudflare butuh Account ID di path: ganti placeholder {ACCOUNT_ID} dari env bila ada
+  return base.replace("{ACCOUNT_ID}", process.env.CLOUDFLARE_ACCOUNT_ID || process.env.CF_ACCOUNT_ID || "");
 }
 
 export interface ChatResult { content: string; modelUsed: string; provider: string; status: number; raw?: any; fallbackFrom?: string[] }
@@ -39,6 +41,8 @@ export async function callProvider(model: LytoosModel, body: any, userKeys?: Rec
   }
   const json = JSON.parse(text);
   const content = json.choices?.[0]?.message?.content ?? "";
+  // Aturan riset: HTTP 200 dengan body kosong/error (sering terjadi di OpenRouter) = kegagalan -> picu fallback
+  if (!content) { const e:any = new Error(`Upstream ${model.provider} returned empty content`); e.status = 502; throw e; }
   return { content, modelUsed: model.id, provider: model.provider, status: 200, raw: json };
 }
 
