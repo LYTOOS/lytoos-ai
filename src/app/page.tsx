@@ -14,14 +14,14 @@ export default function Home(){
     <section className="pb-10 pt-6 text-center sm:pt-12">
       <span className="inline-flex items-center gap-2 rounded-full border border-violet-500/25 bg-violet-500/10 px-3.5 py-1.5 text-xs font-medium text-violet-300"><span className="h-1.5 w-1.5 rounded-full bg-emerald-400"/> OpenRouter-compatible · Live</span>
       <h1 className="mx-auto mt-6 max-w-3xl text-5xl font-bold leading-[1.05] tracking-tight sm:text-6xl">One API for<br/><span className="bg-gradient-to-r from-violet-300 via-violet-400 to-indigo-400 bg-clip-text text-transparent">every free AI model.</span></h1>
-      <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-zinc-400">Lytoos merutekan permintaanmu ke model gratis terbaik — Muse Spark, Gemini, DeepSeek, Kimi, GPT-6 Astra & Seedance — dan otomatis berpindah saat satu provider kena rate-limit. Tanpa beli token: pakai key gratis kamu sendiri.</p>
+      <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-zinc-400">Lytoos merutekan permintaanmu lewat rantai model gratis hasil riset — Gemini, OpenRouter, Groq, NVIDIA NIM, Z.ai, Cloudflare — dan otomatis berpindah provider saat satu kena rate-limit. Tanpa beli token: pakai key gratis kamu sendiri.</p>
       <div className="mt-8 flex items-center justify-center gap-3">
         <a href="/keys" className="btn-primary">Get a free API key</a>
         <a href="/docs" className="inline-flex items-center rounded-xl border border-white/10 bg-white/[0.04] px-5 py-2.5 text-sm font-semibold transition hover:bg-white/[0.08]">Read the docs</a>
       </div>
       <dl className="mx-auto mt-12 grid max-w-2xl grid-cols-3 divide-x divide-white/[0.07] rounded-2xl border border-white/[0.07] bg-white/[0.02] py-5">
-        <div><dt className="text-2xl font-bold">16</dt><dd className="mt-1 text-xs uppercase tracking-wider text-zinc-500">Models</dd></div>
-        <div><dt className="text-2xl font-bold">7</dt><dd className="mt-1 text-xs uppercase tracking-wider text-zinc-500">Providers</dd></div>
+        <div><dt className="text-2xl font-bold">{MODELS_2027.length}</dt><dd className="mt-1 text-xs uppercase tracking-wider text-zinc-500">Models</dd></div>
+        <div><dt className="text-2xl font-bold">{Object.keys(PROVIDERS).length}</dt><dd className="mt-1 text-xs uppercase tracking-wider text-zinc-500">Providers</dd></div>
         <div><dt className="text-2xl font-bold">$0</dt><dd className="mt-1 text-xs uppercase tracking-wider text-zinc-500">Token cost · BYOK</dd></div>
       </dl>
     </section>
@@ -54,8 +54,8 @@ resp = client.chat.completions.create(
       <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {list.map(m=><article key={m.id} className="card group p-5 transition duration-300 hover:-translate-y-0.5 hover:border-violet-500/40">
           <div className="flex items-center justify-between">
-            <span className="flex items-center gap-2.5"><span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500/30 to-indigo-500/20 text-sm font-bold text-violet-200 ring-1 ring-white/10">{m.providerName.charAt(0)}</span><span className="text-[13px] font-medium text-zinc-300">{m.providerName}</span></span>
-            <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-300 ring-1 ring-emerald-500/20">FREE</span>
+            <span className="flex items-center gap-2.5"><span className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg bg-white p-1.5 ring-1 ring-white/20"><img src={PROVIDERS[m.provider].logo} alt={`Logo ${m.providerName}`} className="max-h-full max-w-full object-contain"/></span><span className="text-[13px] font-medium text-zinc-300">{m.providerName}</span></span>
+            {m.status==="dead" ? <span className="rounded-full bg-red-500/10 px-2.5 py-1 text-[11px] font-semibold text-red-300 ring-1 ring-red-500/25">NONAKTIF</span> : m.status==="trial" ? <span className="rounded-full bg-amber-500/10 px-2.5 py-1 text-[11px] font-semibold text-amber-300 ring-1 ring-amber-500/25">TRIAL</span> : <span className="rounded-full bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-300 ring-1 ring-emerald-500/20">FREE</span>}
           </div>
           <h3 className="mt-4 font-semibold tracking-tight">{m.name}</h3>
           <p className="mt-1.5 line-clamp-3 text-sm leading-relaxed text-zinc-400">{m.description}</p>
