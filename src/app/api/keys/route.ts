@@ -5,7 +5,7 @@ import { PROVIDERS } from "@/lib/models";
 // GET /api/keys -> status provider (apakah key server sudah terisi, tanpa menampilkan key) + daftar Lytoos keys (prefix saja)
 export async function GET(){
   const providers = Object.entries(PROVIDERS).map(([id,p])=>({
-    id, name:p.name, freeUrl:p.freeUrl,
+    id, name:p.name, freeUrl:p.freeUrl, logo:p.logo,
     configured: p.envKey.some(k=>!!process.env[k]),
     env: p.envKey[0],
   }));
