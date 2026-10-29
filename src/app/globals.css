@@ -1,2 +1,17 @@
 @tailwind base; @tailwind components; @tailwind utilities;
-body { background:#0b0b12; color:#f4f4f5; }
+
+:root { color-scheme: dark; }
+* { -webkit-font-smoothing: antialiased; }
+body {
+  background: #06060a;
+  color: #f4f4f5;
+  font-family: ui-sans-system, -apple-system, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-image:
+    radial-gradient(900px 480px at 85% -10%, rgba(124,58,237,.16), transparent 60%),
+    radial-gradient(700px 420px at -10% 0%, rgba(79,70,229,.12), transparent 55%);
+  background-attachment: fixed;
+}
+::selection { background: rgba(124,58,237,.5); }
+.card { @apply rounded-2xl border border-white/[0.08] bg-white/[0.03] shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_20px_50px_-20px_rgba(0,0,0,0.7)]; }
+.btn-primary { @apply inline-flex items-center justify-center rounded-xl bg-gradient-to-b from-violet-500 to-violet-700 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-900/40 transition hover:from-violet-400 hover:to-violet-600 active:scale-[0.98]; }
+.input { @apply rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm outline-none transition placeholder:text-zinc-500 focus:border-violet-500/70 focus:ring-2 focus:ring-violet-500/25; }
