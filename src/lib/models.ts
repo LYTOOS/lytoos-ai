@@ -5,7 +5,7 @@
 // - DeepSeek/Kimi langsung ditandai "dead" (tidak ada free tier API langsung; gratis hanya via NIM/OpenRouter)
 // - Seedance ditandai "trial" (tidak ada API video gratis tetap)
 // - Setiap provider punya logo asli di /logos/<provider>.svg|png (bukan inisial lagi)
-export type ProviderId = "muse" | "agnes" | "gemini" | "deepseek" | "kimi" | "openai" | "seedance" | "openrouter" | "groq" | "cloudflare" | "zai" | "nim" | "mistral";
+export type ProviderId = "muse" | "agnes" | "gemini" | "deepseek" | "kimi" | "openai" | "seedance" | "openrouter" | "groq" | "cloudflare" | "zai" | "nim" | "mistral" | "kilo" | "requesty" | "pollinations";
 export type Capability = "chat" | "reasoning" | "code" | "vision" | "video" | "image";
 export type ModelStatus = "active" | "trial" | "dead";
 
@@ -26,7 +26,7 @@ export interface LytoosModel {
   tags: string[];
 }
 
-export const PROVIDERS: Record<ProviderId, { name: string; envKey: string[]; baseUrlEnv: string; defaultBase: string; freeUrl: string; logo: string }> = {
+export const PROVIDERS: Record<ProviderId, { name: string; envKey: string[]; baseUrlEnv: string; defaultBase: string; freeUrl: string; logo: string; keyless?: boolean }> = {
   muse:       { name: "Meta Muse",    envKey: ["MUSE_API_KEY","META_API_KEY"], baseUrlEnv: "MUSE_BASE_URL",     defaultBase: "https://api.meta.ai/v1", freeUrl: "https://www.meta.ai", logo: "/logos/muse.svg" },
   agnes:      { name: "Agnes AI",     envKey: ["AGNES_API_KEY"],               baseUrlEnv: "AGNES_BASE_URL",    defaultBase: "https://api.agnes-ai.com/v1", freeUrl: "https://agnes.ai", logo: "/logos/agnes.png" },
   gemini:     { name: "Google Gemini",envKey: ["GEMINI_API_KEY","GOOGLE_API_KEY"], baseUrlEnv: "GEMINI_BASE_URL", defaultBase: "https://generativelanguage.googleapis.com/v1beta/openai", freeUrl: "https://aistudio.google.com/apikey", logo: "/logos/gemini.svg" },
@@ -40,12 +40,15 @@ export const PROVIDERS: Record<ProviderId, { name: string; envKey: string[]; bas
   zai:        { name: "Z.ai (GLM)",   envKey: ["ZAI_API_KEY","ZHIPU_API_KEY"], baseUrlEnv: "ZAI_BASE_URL",      defaultBase: "https://api.z.ai/api/paas/v4", freeUrl: "https://z.ai/model-api", logo: "/logos/zai.svg" },
   nim:        { name: "NVIDIA NIM",   envKey: ["NVIDIA_API_KEY","NIM_API_KEY"], baseUrlEnv: "NIM_BASE_URL",     defaultBase: "https://integrate.api.nvidia.com/v1", freeUrl: "https://build.nvidia.com", logo: "/logos/nvidia.svg" },
   mistral:    { name: "Mistral AI",   envKey: ["MISTRAL_API_KEY"],             baseUrlEnv: "MISTRAL_BASE_URL",  defaultBase: "https://api.mistral.ai/v1", freeUrl: "https://console.mistral.ai/api-keys", logo: "/logos/mistral.svg" },
+  kilo:       { name: "Kilo Code Gateway", envKey: ["KILO_API_KEY"],          baseUrlEnv: "KILO_BASE_URL",     defaultBase: "https://ai-gateway.kilo.ai/api/v1", freeUrl: "https://kilo.ai", logo: "/logos/kilo.svg", keyless: true },
+  requesty:   { name: "Requesty",     envKey: ["REQUESTY_API_KEY"],            baseUrlEnv: "REQUESTY_BASE_URL", defaultBase: "https://router.requesty.ai/v1", freeUrl: "https://www.requesty.ai", logo: "/logos/requesty.png" },
+  pollinations: { name: "Pollinations", envKey: ["POLLINATIONS_API_KEY"],      baseUrlEnv: "POLLINATIONS_BASE_URL", defaultBase: "https://text.pollinations.ai/openai/v1", freeUrl: "https://pollinations.ai", logo: "/logos/pollinations.png", keyless: true },
 };
 
 // ===== Rantai fallback hasil riset (antar-provider, bukan satu provider) =====
-export const CHAIN_CHAT = ["lytoos/gemini-3.8-flash","lytoos/or-inkling-free","lytoos/groq-gpt-oss-120b","lytoos/or-nemotron-ultra-free","lytoos/glm-4.7-flash","lytoos/mistral-large","lytoos/or-free-router"];
+export const CHAIN_CHAT = ["lytoos/gemini-3.8-flash","lytoos/or-inkling-free","lytoos/groq-gpt-oss-120b","lytoos/or-nemotron-ultra-free","lytoos/glm-4.7-flash","lytoos/mistral-large","lytoos/or-free-router","lytoos/kilo-auto-free","lytoos/requesty-nemotron-ultra","lytoos/pollinations-gpt-oss"];
 export const CHAIN_CODE = ["lytoos/gemini-3.8-flash","lytoos/or-north-mini-code-free","lytoos/or-flint-free","lytoos/groq-qwen3-27b","lytoos/codestral","lytoos/cf-qwen-coder"];
-export const CHAIN_REASONING = ["lytoos/or-nemotron-ultra-free","lytoos/groq-gpt-oss-120b","lytoos/nim-kimi-k3","lytoos/gemini-3.8-flash","lytoos/cf-qwq-32b"];
+export const CHAIN_REASONING = ["lytoos/or-nemotron-ultra-free","lytoos/groq-gpt-oss-120b","lytoos/nim-kimi-k3","lytoos/gemini-3.8-flash","lytoos/cf-qwq-32b","lytoos/requesty-nemotron-ultra"];
 export const CHAIN_VISION = ["lytoos/gemini-3.8-flash","lytoos/or-nemotron-vl-free","lytoos/or-gemma-4-31b-free","lytoos/glm-4.6v-flash","lytoos/nim-llama-vision","lytoos/cf-llama-vision"];
 export const CHAIN_FAST = ["lytoos/gemini-3.5-flash-lite","lytoos/groq-gpt-oss-20b","lytoos/or-lfm-2.5-free","lytoos/ministral-8b","lytoos/cf-llama-3b","lytoos/glm-4.7-flash"];
 export const CHAIN_IMAGE = ["lytoos/cf-flux-schnell"];
@@ -80,7 +83,7 @@ export const MODELS_2027: LytoosModel[] = [
   base({ id:"lytoos/or-nemotron-vl-free", upstream:"nvidia/nemotron-3.5-super-vl:free", name:"Nemotron 3.5 Super VL :free", provider:"openrouter", providerName:"OpenRouter", description:"Vision-language gratis (gambar+video), konteks 1M.", contextLength:1048576, capabilities:["vision","chat"], fallback:CHAIN_VISION.slice(2), tags:["openrouter","free","vision"] }),
   base({ id:"lytoos/or-gemma-4-31b-free", upstream:"google/gemma-4-31b-it:free", name:"Gemma 4 31B IT :free", provider:"openrouter", providerName:"OpenRouter", description:"Gemma 4 multimodal gratis di OpenRouter.", contextLength:256000, capabilities:["vision","chat"], fallback:CHAIN_VISION.slice(3), tags:["openrouter","free","vision"] }),
   base({ id:"lytoos/or-lfm-2.5-free", upstream:"liquid/lfm-2.5-2.6b:free", name:"LFM-2.5 2.6B (Liquid) :free", provider:"openrouter", providerName:"OpenRouter", description:"Model kecil super cepat untuk rantai fast.", contextLength:128000, capabilities:["chat"], fallback:CHAIN_FAST.slice(3), tags:["openrouter","free","fast"] }),
-  base({ id:"lytoos/or-free-router", upstream:"openrouter/free", name:"OpenRouter Free Router", provider:"openrouter", providerName:"OpenRouter", description:"Router bawaan OpenRouter: otomatis memilih model :free yang tersedia. Jaring pengaman terakhir rantai chat.", contextLength:256000, capabilities:["chat"], fallback:[], tags:["openrouter","free","router"] }),
+  base({ id:"lytoos/or-free-router", upstream:"openrouter/free", name:"OpenRouter Free Router", provider:"openrouter", providerName:"OpenRouter", description:"Router bawaan OpenRouter: otomatis memilih model :free yang tersedia. Jaring pengaman terakhir rantai chat.", contextLength:256000, capabilities:["chat"], fallback:["lytoos/kilo-auto-free","lytoos/requesty-nemotron-ultra","lytoos/pollinations-gpt-oss"], tags:["openrouter","free","router"] }),
 
   // ===== Groq (free tier menyusut: GPT-OSS + Qwen) =====
   base({ id:"lytoos/groq-gpt-oss-120b", upstream:"openai/gpt-oss-120b", name:"GPT-OSS-120B (Groq)", provider:"groq", providerName:"Groq", description:"GPT-OSS-120B di hardware Groq: sangat cepat, anggaran ~200K token/hari di free tier.", contextLength:131072, capabilities:["chat","reasoning","code"], fallback:CHAIN_CHAT.slice(3), tags:["groq","free","fast"] }),
@@ -107,6 +110,11 @@ export const MODELS_2027: LytoosModel[] = [
   base({ id:"lytoos/cf-llama-vision", upstream:"@cf/meta/llama-3.2-11b-vision-instruct", name:"Llama 3.2 11B Vision (Cloudflare)", provider:"cloudflare", providerName:"Cloudflare Workers AI", description:"Vision ringan di Workers AI.", contextLength:128000, capabilities:["vision","chat"], fallback:[], tags:["cloudflare","free","vision"] }),
   base({ id:"lytoos/cf-llama-3b", upstream:"@cf/meta/llama-3.2-3b-instruct", name:"Llama 3.2 3B (Cloudflare)", provider:"cloudflare", providerName:"Cloudflare Workers AI", description:"Model mungil untuk rantai fast di Workers AI.", contextLength:128000, capabilities:["chat"], fallback:["lytoos/glm-4.7-flash"], tags:["cloudflare","free","fast"] }),
   base({ id:"lytoos/cf-flux-schnell", upstream:"@cf/black-forest-labs/flux-1-schnell", name:"FLUX.1 Schnell (Cloudflare)", provider:"cloudflare", providerName:"Cloudflare Workers AI", description:"Generate gambar gratis FLUX.1 Schnell di Workers AI.", contextLength:32000, capabilities:["image"], fallback:[], tags:["cloudflare","free","image"] }),
+
+  // ===== Fallback bonus (shortlist terverifikasi 2026-11-02: kapasitas kecil, jaring pengaman terakhir) =====
+  base({ id:"lytoos/kilo-auto-free", upstream:"kilo-auto/free", name:"Kilo Auto Free (Kilo Gateway)", provider:"kilo", providerName:"Kilo Code Gateway", description:"BONUS: router gratis Kilo, bisa anonim tanpa key (terverifikasi live 2026-11-02). Limit 200 request/jam per IP (berbagi untuk semua pengunjung Lytoos). PERINGATAN: model gratis Kilo dapat mencatat prompt untuk pelatihan model — jangan kirim data sensitif.", contextLength:256000, capabilities:["chat","code"], fallback:["lytoos/requesty-nemotron-ultra","lytoos/pollinations-gpt-oss"], tags:["kilo","free","bonus","keyless"] }),
+  base({ id:"lytoos/requesty-nemotron-ultra", upstream:"nvidia/nemotron-3-ultra-550b-a55b", name:"Nemotron 3 Ultra 550B (Requesty)", provider:"requesty", providerName:"Requesty", description:"BONUS: Nemotron Ultra lewat plan Free Requesty (daftar gratis tanpa kartu, 200 request/HARI per organisasi — pool cadangan kecil, bukan provider inti). ID & konteks terverifikasi dari katalog live Requesty 2026-11-02.", contextLength:1048576, capabilities:["reasoning","chat"], fallback:["lytoos/pollinations-gpt-oss"], tags:["requesty","free","bonus","reasoning"] }),
+  base({ id:"lytoos/pollinations-gpt-oss", upstream:"openai-fast", name:"GPT-OSS 20B (Pollinations Classic)", provider:"pollinations", providerName:"Pollinations", description:"BONUS TERAKHIR: GPT-OSS 20B keyless via Pollinations Classic (terverifikasi live 2026-11-02, ID live 'openai-fast'). Limit ±1 request per 30 detik per IP server, tanpa SLA — cadangan darurat bila semua provider lain habis.", contextLength:131072, capabilities:["chat","reasoning"], fallback:[], tags:["pollinations","free","bonus","keyless"] }),
 
   // ===== Entri lama v1: dipertahankan, status diperjelas =====
   base({ id:"lytoos/muse-spark-1.2-free", upstream:"muse-spark-1.2", name:"Muse Spark 1.2 Free", provider:"muse", providerName:"Meta Muse", description:"Entri katalog awal Lytoos (klaim 2027, belum terverifikasi riset) — diperlakukan sebagai trial/BYOK sampai ada endpoint resmi yang terkonfirmasi.", contextLength:262144, capabilities:["chat","vision","code"], status:"trial", fallback:CHAIN_CHAT, tags:["trial","unverified"] }),
