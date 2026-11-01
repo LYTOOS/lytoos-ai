@@ -18,11 +18,13 @@ export interface ChatResult { content: string; modelUsed: string; provider: stri
 export async function callProvider(model: LytoosModel, body: any, userKeys?: Record<string,string>): Promise<ChatResult> {
   const key = getProviderKey(model, userKeys);
   const demo = process.env.LYTOOS_DEMO_MODE === "1";
-  if (!key) {
+  const keyless = !!PROVIDERS[model.provider].keyless;
+  if (!key && !keyless) {
     if (demo) return demoReply(model, body);
     const e:any = new Error(`No API key for provider ${model.provider}. Add it in /keys (BYOK, gratis dari provider).`);
     e.status = 401; e.code = "no_provider_key"; throw e;
   }
+  if (!key && keyless && demo) return demoReply(model, body);
   if (model.capabilities.includes("video")) {
     const e:any = new Error("Use /v1/videos/generations for Seedance models");
     e.status = 400; throw e;
@@ -30,7 +32,7 @@ export async function callProvider(model: LytoosModel, body: any, userKeys?: Rec
   const url = `${getBaseUrl(model)}/chat/completions`;
   const res = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type":"application/json", Authorization:`Bearer ${key}` },
+    headers: { "Content-Type":"application/json", ...(key ? { Authorization:`Bearer ${key}` } : {}) },
     body: JSON.stringify({ ...body, model: model.upstream, stream: false }),
     signal: AbortSignal.timeout(45000),
   });
