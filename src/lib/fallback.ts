@@ -32,7 +32,8 @@ export async function chatWithFallback(requestedId: string, body:any, userKeys?:
       return { ...r, fallbackChain: chain, requested: requestedId };
     } catch(e:any) {
       lastErr = e;
-      chain.push(`${model.id}:${e.status||"error"}`);
+      const msg = String(e?.message || "").replace(/[\r\n|]+/g, " ").slice(0, 120);
+      chain.push(`${model.id}:${e.status||"error"}${msg ? ":" + msg : ""}`);
       if (e.status===429 || e.rateLimit) markRateLimited(model.id);
       if (e.status===400) break; // jangan fallback utk bad request
       continue; // 401(no key)/402/408/5xx/network -> coba model berikutnya
