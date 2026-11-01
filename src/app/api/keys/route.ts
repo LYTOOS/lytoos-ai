@@ -6,7 +6,8 @@ import { PROVIDERS } from "@/lib/models";
 export async function GET(){
   const providers = Object.entries(PROVIDERS).map(([id,p])=>({
     id, name:p.name, freeUrl:p.freeUrl, logo:p.logo,
-    configured: p.envKey.some(k=>!!process.env[k]),
+    configured: !!p.keyless || p.envKey.some(k=>!!process.env[k]),
+    keyless: !!p.keyless,
     env: p.envKey[0],
   }));
   const sb = supabaseAdmin();
